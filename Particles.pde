@@ -37,6 +37,6 @@ class Particle {
     }
 
     fill(col);
-    ellipse(x, y, 6, 6);
+    ellipse(x, y, 10, 10);
   }
 }

@@ -178,7 +178,6 @@ class Node {
     for (Particle p : particles) {
       p.owner = null;
     }
-    particles.clear();
 
     if (divided) {
       for (Node child : children) {
@@ -188,6 +187,24 @@ class Node {
 
     divided = false;
     children = new Node[4];
+  }
+
+  Particle findNearest(float px, float py) {
+    Particle nearest = null;
+    float nearestDistSq = Float.MAX_VALUE;
+
+    ArrayList<Particle> candidates = new ArrayList<Particle>();
+    collectParticles(candidates);
+
+    for (Particle p : candidates) {
+      float distSq = sq(px - p.x) + sq(py - p.y);
+      if (distSq < nearestDistSq) {
+        nearestDistSq = distSq;
+        nearest = p;
+      }
+    }
+
+    return nearest;
   }
 }
 
@@ -240,5 +257,15 @@ class Quadtree {
 
   void clear() {
     root.clear();
+  }
+
+  Particle findNearest(float px, float py) {
+    return root.findNearest(px, py);
+  }
+
+  void remove(Particle p) {
+    if (p.owner != null) {
+      p.owner.remove(p);
+    }
   }
 }

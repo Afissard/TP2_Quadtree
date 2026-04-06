@@ -44,6 +44,8 @@ void mousePressed() {
       Particle p = allParticles.get(i);
       if (dist(mouseX, mouseY, p.x, p.y) < 5) {
         allParticles.remove(i);
+        Particle qp = qt.findNearest(p.x, p.y);
+        qp.owner.remove(qp);
         break;
       }
     }
@@ -63,6 +65,7 @@ void mouseReleased() {
 
 void keyPressed() {
   if (key == 'c' || key == 'C') {
+    allParticles.clear();
     qt.clear();
   }
   if (key == 'q' || key == 'Q') {
