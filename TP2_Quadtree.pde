@@ -4,6 +4,7 @@ ArrayList<Particle> allParticles = new ArrayList<Particle>();
 
 Particle selected = null;
 boolean showTree = true;
+boolean moveParticles = true;
 
 
 Quadtree qt;
@@ -66,14 +67,20 @@ void keyPressed() {
   if (key == 'q' || key == 'Q') {
     showTree = !showTree;
   }
+  if (key == 'b' || key == 'B') {
+    moveParticles = !moveParticles;
+  }
 }
 
 void draw() {
   background(0);
 
   qt = new Quadtree(0, 0, width, height, MAX_PARTICLES_PER_NODE);
-
+  
   for (Particle p : allParticles) {
+    if (p != selected && moveParticles) {
+      p.update(width, height);
+    }
     qt.insert(p);
   }
 
