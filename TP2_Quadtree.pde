@@ -12,9 +12,7 @@ void setup() {
   
   // Add random particles
   for (int i = 0; i < 100; i++) {
-    // choose a random color from the list
-    color col = colors[int(random(colors.length))];
-    qt.insert(new Particle(random(width), random(height), col));
+    qt.insert(new Particle(random(width), random(height)));
   }
 }
 
