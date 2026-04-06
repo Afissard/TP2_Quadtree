@@ -63,7 +63,7 @@ void mouseReleased() {
 
 void keyPressed() {
   if (key == 'c' || key == 'C') {
-    allParticles.clear();
+    qt.clear();
   }
   if (key == 'q' || key == 'Q') {
     showTree = !showTree;
@@ -83,8 +83,9 @@ void draw() {
     if (p != selected && moveParticles) {
       p.update(width, height);
     }
-    qt.insert(p);
+    qt.updateParticle(p);
   }
+
 
   if (showTree) {
     qt.display(showParticles);
