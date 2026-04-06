@@ -1,14 +1,5 @@
 int MAX_PARTICLES_PER_NODE = 4;
 
-// Particle class
-class Particle {
-  float x, y;
-  
-  Particle(float x, float y) {
-    this.x = x;
-    this.y = y;
-  }
-}
 
 Quadtree qt;
 
