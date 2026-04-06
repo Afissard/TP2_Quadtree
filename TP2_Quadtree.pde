@@ -1,14 +1,5 @@
 int MAX_PARTICLES_PER_NODE = 4;
 
-// Particle class
-class Particle {
-  float x, y;
-  
-  Particle(float x, float y) {
-    this.x = x;
-    this.y = y;
-  }
-}
 
 Quadtree qt;
 
@@ -21,7 +12,9 @@ void setup() {
   
   // Add random particles
   for (int i = 0; i < 100; i++) {
-    qt.insert(new Particle(random(width), random(height)));
+    // choose a random color from the list
+    color col = colors[int(random(colors.length))];
+    qt.insert(new Particle(random(width), random(height), col));
   }
 }
 
