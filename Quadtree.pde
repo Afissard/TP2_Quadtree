@@ -26,7 +26,8 @@ class Node {
     this.particles = new ArrayList<Particle>();
     this.children = new Node[4];
     this.divided = false;
-    this.nodeColor = colors[int(random(colors.length))];
+    int index = int((x + y) % colors.length);
+    this.nodeColor = colors[index];
   }
 
   boolean contains(float px, float py) {
@@ -102,7 +103,8 @@ class Node {
       }
     } else {
       for (Particle p : particles) {
-        p.display(nodeColor);
+        p.col = nodeColor;
+        p.display();
       }
     }
   }
