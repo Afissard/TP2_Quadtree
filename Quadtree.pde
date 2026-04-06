@@ -28,18 +28,41 @@ class Node {
       return false;
     }
 
-    if (particles.size() < capacity) {
-      particles.add(p);
-      return true;
-    } else {
-      if (!divided) {
-        subdivide();
+    // If this is a leaf, try to keep particles here
+    if (!divided) {
+      if (particles.isEmpty()) {
+        particles.add(p);
+        return true;
       }
-      
-      for (Node child : children) {
-        if (child.insert(p)) {
-          return true;
-        }
+
+      // Assumes Particle has a color field named 'col'
+      color leafColor = particles.get(0).col;
+
+      // Same color + capacity available => keep in this leaf
+      if (p.col == leafColor && particles.size() < capacity) {
+        particles.add(p);
+        return true;
+      }
+
+      // Different color OR full => subdivide and redistribute
+      subdivide();
+
+      ArrayList<Particle> existing = new ArrayList<Particle>(particles);
+      particles.clear();
+
+      for (Particle oldP : existing) {
+        insertIntoChildren(oldP);
+      }
+    }
+
+    // If already divided, insert into the appropriate child
+    return insertIntoChildren(p);
+  }
+
+  boolean insertIntoChildren(Particle p) {
+    for (Node child : children) {
+      if (child.insert(p)) {
+        return true;
       }
     }
     return false;
@@ -72,12 +95,8 @@ class Node {
     }
 
     // Display particles in this node
-    fill(0, 255, 0);
-    stroke(0, 255, 0);
-    strokeWeight(2);
     for (Particle p : particles) {
-      point(p.x, p.y);
-      circle(p.x, p.y, 4);
+      p.display();
     }
 
   }
