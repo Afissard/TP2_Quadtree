@@ -91,24 +91,27 @@ class Node {
     divided = true;
   }
 
-  void display() {
-    stroke(255);
-    noFill();
-    strokeWeight(1);
-    rect(x, y, w, h);
+  void display(boolean showParticles) {
+  stroke(125);
+  noFill();
+  strokeWeight(1);
+  rect(x, y, w, h);
 
-    if (divided) {
-      for (Node child : children) {
-        child.display();
-      }
-    } else {
+  if (divided) {
+    for (Node child : children) {
+      child.display(showParticles);
+    }
+  } else {
+    if (showParticles) {
       for (Particle p : particles) {
         p.col = nodeColor;
         p.display();
       }
     }
   }
+  }
 }
+
 
 
 // Quadtree class
@@ -125,7 +128,7 @@ class Quadtree {
   }
 
   // Display the entire quadtree
-  void display() {
-    root.display();
+  void display(boolean showParticles) {
+    root.display(showParticles);
   }
 }
