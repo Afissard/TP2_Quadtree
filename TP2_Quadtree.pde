@@ -16,6 +16,14 @@ void setup() {
   }
 }
 
+void mousePressed() {
+  // On crée un nouveau point aux coordonnées de la souris
+  Particle p = new Particle(mouseX, mouseY);
+  
+  // On l'insère dans le Quadtree
+  qt.insert(p);
+}
+
 void draw() {
   background(0);
   qt.display();
