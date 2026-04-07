@@ -1,13 +1,8 @@
-
 int MAX_PARTICLES_PER_NODE = 4;
-
-ArrayList<Particle> allParticles = new ArrayList<Particle>();
-
 Particle selected = null;
 boolean showTree = true;
 boolean moveParticles = true;
 boolean showParticles = true;
-
 
 Quadtree qt;
 
@@ -17,36 +12,27 @@ void settings() {
 
 void setup() {
   qt = new Quadtree(0, 0, width, height, MAX_PARTICLES_PER_NODE);
-  
-  // Add random particles
+
   for (int i = 0; i < 100; i++) {
-    Particle p = new Particle(random(width), random(height));
-    allParticles.add(p);
+    qt.insert(new Particle(random(width), random(height)));
   }
 }
 
 void mousePressed() {
   if (mouseButton == LEFT) {
-
-    for (Particle p : allParticles) {
-      if (dist(mouseX, mouseY, p.x, p.y) < 5) {
-        selected = p;
-        return;
-      }
+    Particle p = qt.findNearest(mouseX, mouseY);
+    if (p != null && dist(mouseX, mouseY, p.x, p.y) < 5) {
+      selected = p;
+      return;
     }
 
-    Particle p = new Particle(mouseX, mouseY);
-    allParticles.add(p);
-  }
-
-  if (mouseButton == RIGHT) {
-    for (int i = allParticles.size() - 1; i >= 0; i--) {
-      Particle p = allParticles.get(i);
-      if (dist(mouseX, mouseY, p.x, p.y) < 5) {
-        allParticles.remove(i);
-        Particle qp = qt.findNearest(p.x, p.y);
-        qp.owner.remove(qp);
-        break;
+    qt.insert(new Particle(mouseX, mouseY));
+  } else if (mouseButton == RIGHT) {
+    Particle p = qt.findNearest(mouseX, mouseY);
+    if (p != null && dist(mouseX, mouseY, p.x, p.y) < 5) {
+      qt.remove(p);
+      if (p == selected) {
+        selected = null;
       }
     }
   }
@@ -65,8 +51,8 @@ void mouseReleased() {
 
 void keyPressed() {
   if (key == 'c' || key == 'C') {
-    allParticles.clear();
     qt.clear();
+    selected = null;
   }
   if (key == 'q' || key == 'Q') {
     showTree = !showTree;
@@ -75,35 +61,33 @@ void keyPressed() {
     moveParticles = !moveParticles;
   }
   if (key == 'p' || key == 'P') {
-  showParticles = !showParticles;
+    showParticles = !showParticles;
   }
 }
 
 void draw() {
   background(0);
 
-  for (Particle p : allParticles) {
+  ArrayList<Particle> particles = qt.getParticles();
+
+  for (Particle p : particles) {
     if (p != selected && moveParticles) {
       p.update(width, height);
     }
     qt.updateParticle(p);
   }
 
-
   if (showTree) {
     qt.display(showParticles);
-  }else{
-    if (showParticles) {
-      for (Particle p : allParticles) {
-        p.display();
-      }
+  } else if (showParticles) {
+    for (Particle p : particles) {
+      p.display();
     }
   }
 
-  
   textSize(15);
-  fill(255,255,255);
-  text("Appuyer sur B pour arrêter les points", 0, 20); 
+  fill(255);
+  text("Appuyer sur B pour arrêter les points", 0, 20);
   text("Appuyer sur C pour supprimer tous les points", 0, 40);
   text("Appuyer sur Q pour basculer l'affichage de l'arbre", 0, 60);
   text("Appuyer sur P pour basculer l'affichage des particules", 0, 80);

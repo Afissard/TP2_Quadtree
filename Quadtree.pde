@@ -1,10 +1,10 @@
 // list of possible colors for particles
 color[] colors = {
-  color(255, 0, 0), 
-  color(0, 255, 0), 
-  color(0, 0, 255), 
-  color(255, 255, 0), 
-  color(255, 0, 255), 
+  color(255, 0, 0),
+  color(0, 255, 0),
+  color(0, 0, 255),
+  color(255, 255, 0),
+  color(255, 0, 255),
   color(0, 255, 255)
 };
 
@@ -179,9 +179,13 @@ class Node {
       p.owner = null;
     }
 
+    particles.clear();
+
     if (divided) {
       for (Node child : children) {
-        if (child != null) child.clear();
+        if (child != null) {
+          child.clear();
+        }
       }
     }
 
@@ -219,9 +223,16 @@ class Quadtree {
     return root.insert(p);
   }
 
+  ArrayList<Particle> getParticles() {
+    ArrayList<Particle> particles = new ArrayList<Particle>();
+    root.collectParticles(particles);
+    return particles;
+  }
+
   void display(boolean showParticles) {
     root.display(showParticles);
   }
+
 
   boolean updateParticle(Particle p) {
     if (p == null) return false;
@@ -257,6 +268,7 @@ class Quadtree {
 
   void clear() {
     root.clear();
+    // root = new Node(null, x, y, w, h, capacity);
   }
 
   Particle findNearest(float px, float py) {
@@ -269,3 +281,4 @@ class Quadtree {
     }
   }
 }
+

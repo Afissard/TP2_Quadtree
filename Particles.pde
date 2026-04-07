@@ -1,15 +1,15 @@
 class Particle {
   float x, y;
   Node owner;
-  color col; 
+  color col;
 
   float vx, vy;
 
   Particle(float x, float y) {
     this.x = x;
     this.y = y;
-    this.col = color(255); 
-    
+    this.col = color(255);
+
     this.vx = random(-2, 2);
     this.vy = random(-2, 2);
   }
@@ -17,7 +17,7 @@ class Particle {
   void update(float worldW, float worldH) {
     x += vx;
     y += vy;
-    
+
     if (x <= 0 || x >= worldW) {
       vx *= -1;
       x = constrain(x, 0.001f, worldW - 0.001f);
