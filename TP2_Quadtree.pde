@@ -19,6 +19,7 @@ Quadtree qt;
 
 /** Initializes the window size. */
 void settings() {
+  // Définition de la taille de la fenêtre
   size(800, 600);
 }
 
@@ -26,8 +27,10 @@ void settings() {
  * Creates the quadtree and populates it with an initial set of particles.
  */
 void setup() {
+  // Création du quadtree couvrant toute la fenêtre
   qt = new Quadtree(0, 0, width, height, MAX_PARTICLES_PER_NODE);
 
+  // Ajout de 100 particules aléatoires au quadtree
   for (int i = 0; i < 100; i++) {
     qt.insert(new Particle(random(width), random(height)));
   }
@@ -43,19 +46,23 @@ void setup() {
  */
 void mousePressed() {
   if (mouseButton == LEFT) {
+    // Trouver la particule la plus proche du clic
     Particle p = qt.findNearest(mouseX, mouseY);
+    // Si une particule est proche (distance < 5), la sélectionner pour la déplacer
     if (p != null && dist(mouseX, mouseY, p.x, p.y) < 5) {
       selected = p;
       return;
     }
 
+    // Sinon, créer une nouvelle particule à l'emplacement du clic
     qt.insert(new Particle(mouseX, mouseY));
   } else if (mouseButton == RIGHT) {
+    // Supprimer la particule la plus proche du clic droit si elle existe
     Particle p = qt.findNearest(mouseX, mouseY);
     if (p != null && dist(mouseX, mouseY, p.x, p.y) < 5) {
       qt.remove(p);
       if (p == selected) {
-        selected = null;
+        selected = null; // Déselectionner si c'était la particule sélectionnée
       }
     }
   }
@@ -83,16 +90,20 @@ void mouseReleased() {
  */
 void keyPressed() {
   if (key == 'a' || key == 'A') {
+    // Supprimer toutes les particules
     qt.clear();
     selected = null;
   }
   if (key == 'z' || key == 'Z') {
+    // Basculer l'affichage de l'arbre
     showTree = !showTree;
   }
   if (key == ' ') {
+    // Activer/désactiver le mouvement des particules
     moveParticles = !moveParticles;
   }
   if (key == 'e' || key == 'E') {
+    // Basculer l'affichage des particules
     showParticles = !showParticles;
   }
 }
@@ -103,25 +114,30 @@ void keyPressed() {
  * either the tree view or the flat particle view depending on settings.
  */
 void draw() {
+  // Effacer le fond à chaque frame
   background(0);
 
+  // Récupérer toutes les particules du quadtree
   ArrayList<Particle> particles = qt.getParticles();
 
+  // Mettre à jour la position de chaque particule
   for (Particle p : particles) {
     if (p != selected && moveParticles) {
-      p.update(width, height);
+      p.update(width, height); // Déplacement automatique
     }
-    qt.updateParticle(p);
+    qt.updateParticle(p); // Mise à jour dans le quadtree
   }
 
+  // Affichage
   if (showTree) {
-    qt.display(showParticles);
+    qt.display(showParticles); // Affiche l'arbre et éventuellement les particules
   } else if (showParticles) {
     for (Particle p : particles) {
-      p.display();
+      p.display(); // Affiche uniquement les particules
     }
   }
 
+  // Instructions à l'écran
   textSize(15);
   fill(255);
   text("Appuyer sur Espace pour arrêter les points", 0, 20);
