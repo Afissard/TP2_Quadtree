@@ -1,10 +1,21 @@
+/**
+ * Represents a particle moving inside the simulation world.
+ * Each particle stores its position, velocity, display color,
+ * and a reference to the quadtree node that currently owns it.
+ */
 class Particle {
-  float x, y;
-  Node owner;
-  color col;
+  float x, y;      // Current position
+  Node owner;      // Quadtree node that contains this particle
+  color col;       // Display color
 
-  float vx, vy;
+  float vx, vy;    // Current velocity
 
+  /**
+   * Creates a particle at the given position with a random velocity.
+   *
+   * @param x initial x position
+   * @param y initial y position
+   */
   Particle(float x, float y) {
     this.x = x;
     this.y = y;
@@ -14,6 +25,12 @@ class Particle {
     this.vy = random(-2, 2);
   }
 
+  /**
+   * Updates the particle position and bounces it off the world bounds.
+   *
+   * @param worldW world width
+   * @param worldH world height
+   */
   void update(float worldW, float worldH) {
     x += vx;
     y += vy;
@@ -28,6 +45,7 @@ class Particle {
     }
   }
 
+  /** Draws the particle, highlighting it when selected. */
   void display() {
     if (this == selected) {
       stroke(255);

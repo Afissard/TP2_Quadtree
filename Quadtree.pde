@@ -8,6 +8,11 @@ color[] colors = {
   color(0, 255, 255)
 };
 
+/**
+ * A quadtree node that stores particles inside a rectangular region.
+ * A node can either be a leaf containing particles directly, or an internal
+ * node divided into four child regions.
+ */
 class Node {
   Node parent;
   float x, y, w, h;
@@ -17,6 +22,16 @@ class Node {
   boolean divided;
   color nodeColor;
 
+  /**
+   * Creates a new node for the given rectangle and capacity.
+   *
+   * @param parent   parent node, or null for the root
+   * @param x        left position of the region
+   * @param y        top position of the region
+   * @param w        width of the region
+   * @param h        height of the region
+   * @param capacity maximum number of particles before subdivision
+   */
   Node(Node parent, float x, float y, float w, float h, int capacity) {
     this.parent = parent;
     this.x = x;
@@ -32,10 +47,15 @@ class Node {
     this.nodeColor = colors[index];
   }
 
+  /** Returns true when the point is inside this node's bounds. */
   boolean contains(float px, float py) {
     return px >= x && px < x + w && py >= y && py < y + h;
   }
 
+  /**
+   * Returns the child index for a point.
+   * 0 = NW, 1 = NE, 2 = SW, 3 = SE
+   */
   int childIndexFor(float px, float py) {
     float midX = x + w * 0.5f;
     float midY = y + h * 0.5f;
@@ -46,10 +66,15 @@ class Node {
     return idx;
   }
 
+  /** Returns the child node that contains the given point. */
   Node childFor(float px, float py) {
     return children[childIndexFor(px, py)];
   }
 
+  /**
+   * Inserts a particle into this node or one of its children.
+   * Subdivides the node if the capacity is exceeded.
+   */
   boolean insert(Particle p) {
     if (!contains(p.x, p.y)) {
       return false;
@@ -69,6 +94,7 @@ class Node {
     return true;
   }
 
+  /** Splits this node into four children and moves particles into them. */
   void subdivideAndRedistribute() {
     if (divided) return;
 
@@ -90,6 +116,7 @@ class Node {
     }
   }
 
+  /** Removes a particle from this node and tries to collapse ancestors. */
   boolean remove(Particle p) {
     if (!particles.remove(p)) {
       return false;
@@ -100,6 +127,10 @@ class Node {
     return true;
   }
 
+  /**
+   * Checks parent nodes and collapses any internal node whose subtree
+   * particle count is below or equal to capacity.
+   */
   void rebalanceUpward() {
     Node current = this;
 
@@ -114,6 +145,7 @@ class Node {
     }
   }
 
+  /** Counts all particles stored in this node and its descendants. */
   int subtreeParticleCount() {
     int total = particles.size();
 
@@ -128,6 +160,7 @@ class Node {
     return total;
   }
 
+  /** Collects all particles in this subtree into the provided list. */
   void collectParticles(ArrayList<Particle> out) {
     out.addAll(particles);
 
@@ -140,6 +173,7 @@ class Node {
     }
   }
 
+  /** Collapses this internal node back into a leaf node. */
   void collapseToLeaf() {
     if (!divided) return;
 
@@ -156,6 +190,7 @@ class Node {
     }
   }
 
+  /** Draws the node bounds and optionally its particles. */
   void display(boolean showParticles) {
     stroke(125);
     noFill();
@@ -174,6 +209,7 @@ class Node {
     }
   }
 
+  /** Clears all particles and child nodes from this subtree. */
   void clear() {
     for (Particle p : particles) {
       p.owner = null;
@@ -193,6 +229,7 @@ class Node {
     children = new Node[4];
   }
 
+  /** Returns the particle closest to the given point within this subtree. */
   Particle findNearest(float px, float py) {
     Particle nearest = null;
     float nearestDistSq = Float.MAX_VALUE;
@@ -212,28 +249,47 @@ class Node {
   }
 }
 
+/**
+ * Quadtree container that manages the root node and provides
+ * high-level insertion, update, removal, and search operations.
+ */
 class Quadtree {
   Node root;
 
+  /**
+   * Creates a quadtree covering the given rectangle.
+   *
+   * @param x        left position of the tree
+   * @param y        top position of the tree
+   * @param w        width of the tree
+   * @param h        height of the tree
+   * @param capacity maximum number of particles per leaf node
+   */
   Quadtree(float x, float y, float w, float h, int capacity) {
     root = new Node(null, x, y, w, h, capacity);
   }
 
+  /** Inserts a particle into the quadtree. */
   boolean insert(Particle p) {
     return root.insert(p);
   }
 
+  /** Returns a flat list of every particle stored in the tree. */
   ArrayList<Particle> getParticles() {
     ArrayList<Particle> particles = new ArrayList<Particle>();
     root.collectParticles(particles);
     return particles;
   }
 
+  /** Draws the full quadtree and optionally all particles. */
   void display(boolean showParticles) {
     root.display(showParticles);
   }
 
-
+  /**
+   * Updates a particle after it has moved.
+   * Reinserts it if it no longer belongs to its current owner node.
+   */
   boolean updateParticle(Particle p) {
     if (p == null) return false;
 
@@ -252,6 +308,10 @@ class Quadtree {
     return insertFrom(start, p);
   }
 
+  /**
+   * Attempts to insert a particle starting from a given node and moving
+   * upward until a node containing the particle is found.
+   */
   boolean insertFrom(Node start, Particle p) {
     Node current = start;
 
@@ -266,19 +326,21 @@ class Quadtree {
     return current.insert(p);
   }
 
+  /** Removes all particles and resets the tree structure. */
   void clear() {
     root.clear();
     // root = new Node(null, x, y, w, h, capacity);
   }
 
+  /** Finds the particle nearest to the given point. */
   Particle findNearest(float px, float py) {
     return root.findNearest(px, py);
   }
 
+  /** Removes a particle from the tree if it has an owner node. */
   void remove(Particle p) {
     if (p.owner != null) {
       p.owner.remove(p);
     }
   }
 }
-

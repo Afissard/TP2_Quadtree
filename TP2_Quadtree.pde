@@ -1,15 +1,30 @@
+/**
+ * Main Processing sketch for the quadtree particle simulation.
+ * Handles setup, rendering, user interaction, and keyboard controls.
+ */
+
+// Maximum number of particles allowed in a leaf node before subdivision.
 int MAX_PARTICLES_PER_NODE = 4;
+
+// Currently selected particle, if any.
 Particle selected = null;
+
+// Display and simulation toggles.
 boolean showTree = true;
 boolean moveParticles = true;
 boolean showParticles = true;
 
+// Quadtree used to store, update, and query particles.
 Quadtree qt;
 
+/** Initializes the window size. */
 void settings() {
   size(800, 600);
 }
 
+/**
+ * Creates the quadtree and populates it with an initial set of particles.
+ */
 void setup() {
   qt = new Quadtree(0, 0, width, height, MAX_PARTICLES_PER_NODE);
 
@@ -18,6 +33,14 @@ void setup() {
   }
 }
 
+/**
+ * Handles mouse clicks.
+ * Left click:
+ * - select a nearby particle
+ * - otherwise create a new particle
+ * Right click:
+ * - remove a nearby particle
+ */
 void mousePressed() {
   if (mouseButton == LEFT) {
     Particle p = qt.findNearest(mouseX, mouseY);
@@ -38,6 +61,7 @@ void mousePressed() {
   }
 }
 
+/** Moves the selected particle with the mouse while dragging. */
 void mouseDragged() {
   if (selected != null) {
     selected.x = mouseX;
@@ -45,10 +69,18 @@ void mouseDragged() {
   }
 }
 
+/** Clears the current selection when the mouse is released. */
 void mouseReleased() {
   selected = null;
 }
 
+/**
+ * Handles keyboard shortcuts.
+ * A: clear all particles
+ * Z: toggle quadtree display
+ * Space: pause/resume particle movement
+ * E: toggle particle rendering
+ */
 void keyPressed() {
   if (key == 'a' || key == 'A') {
     qt.clear();
@@ -65,6 +97,11 @@ void keyPressed() {
   }
 }
 
+/**
+ * Main draw loop.
+ * Updates particle positions, keeps the quadtree in sync, and renders
+ * either the tree view or the flat particle view depending on settings.
+ */
 void draw() {
   background(0);
 
