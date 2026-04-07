@@ -50,17 +50,17 @@ void mouseReleased() {
 }
 
 void keyPressed() {
-  if (key == 'c' || key == 'C') {
+  if (key == 'a' || key == 'A') {
     qt.clear();
     selected = null;
   }
-  if (key == 'q' || key == 'Q') {
+  if (key == 'z' || key == 'Z') {
     showTree = !showTree;
   }
-  if (key == 'b' || key == 'B') {
+  if (key == ' ') {
     moveParticles = !moveParticles;
   }
-  if (key == 'p' || key == 'P') {
+  if (key == 'e' || key == 'E') {
     showParticles = !showParticles;
   }
 }
@@ -87,10 +87,10 @@ void draw() {
 
   textSize(15);
   fill(255);
-  text("Appuyer sur B pour arrêter les points", 0, 20);
-  text("Appuyer sur C pour supprimer tous les points", 0, 40);
-  text("Appuyer sur Q pour basculer l'affichage de l'arbre", 0, 60);
-  text("Appuyer sur P pour basculer l'affichage des particules", 0, 80);
+  text("Appuyer sur Espace pour arrêter les points", 0, 20);
+  text("Appuyer sur A pour supprimer tous les points", 0, 40);
+  text("Appuyer sur Z pour basculer l'affichage de l'arbre", 0, 60);
+  text("Appuyer sur E pour basculer l'affichage des particules", 0, 80);
   text("Clique droit pour supprimer un point", 0, 100);
   text("Clique gauche pour ajouter un point", 0, 120);
   text("Clique gauche appuyé pour déplacer un point", 0, 140);
